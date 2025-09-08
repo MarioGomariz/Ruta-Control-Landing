@@ -295,9 +295,14 @@ function ChatWidget() {
   );
 
   const respond = (text: string) => {
-    const clean = text.toLowerCase();
+    const clean = text.toLowerCase().trim();
+    const isGreeting = /^(hola|buenas|buenos dias|buenas tardes|buenas noches|hello|hi|qué tal|que tal)\b/.test(clean);
     const match = faq.find((f) => f.kw.some((k) => clean.includes(k)));
-    const answer = match ? match.a : "Gracias por tu consulta. En breve te responderá un asesor. También podés dejar un email en la sección de Contacto.";
+    const answer = isGreeting
+      ? "¡Hola! ¿En qué puedo ayudarte? Puedo contarte sobre módulos, reportes, roles o precios."
+      : match
+      ? match.a
+      : "Gracias por tu consulta. En breve te responderá un asesor. También podés dejar un email en la sección de Contacto.";
     setMessages((m) => [...m, { role: "user", text }, { role: "bot", text: answer }]);
   };
 

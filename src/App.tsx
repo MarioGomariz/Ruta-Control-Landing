@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import logo from './assets/logo.png'
 
 const LOGIN_URL = "https://ruta-control.vercel.app";
@@ -263,6 +263,7 @@ function ChatWidget() {
     { role: "bot", text: "¿Tienes alguna duda? Estoy para ayudarte." },
   ]);
   const [typing, setTyping] = useState(false);
+  const endRef = useRef<HTMLDivElement | null>(null);
 
   const faq = useMemo(
     () => [
@@ -308,16 +309,17 @@ function ChatWidget() {
     // Push user message immediately
     setMessages((m) => [...m, { role: "user", text }]);
 
-    // After 3s, show typing indicator; after 3s more, send bot answer
+    // After a short delay, show typing indicator; keep it for a variable duration based on answer length
+    const initialDelay = 1200; // ms
+    const typingMs = Math.min(3800, Math.max(1600, 400 + answer.length * 35));
     const typingTimer = setTimeout(() => {
       setTyping(true);
       const answerTimer = setTimeout(() => {
         setTyping(false);
         setMessages((m) => [...m, { role: "bot", text: answer }]);
-      }, 3000);
-      // Store timer if future cleanup is needed
+      }, typingMs);
       (window as any).__rc_answerTimer = answerTimer;
-    }, 3000);
+    }, initialDelay);
     (window as any).__rc_typingTimer = typingTimer;
   };
 
@@ -328,6 +330,11 @@ function ChatWidget() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
+
+  // Auto-scroll to the latest message or typing indicator
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, typing, open]);
 
   return (
     <div className="fixed bottom-5 right-5 z-50">
@@ -345,7 +352,7 @@ function ChatWidget() {
                 <div
                   className={`${m.role === 'bot'
                     ? 'bg-slate-200 text-slate-800 rounded-tr-2xl rounded-br-2xl rounded-tl-md'
-                    : 'bg-[var(--color-celeste)] text-white rounded-tl-2xl rounded-bl-2xl rounded-tr-md'} max-w-[78%] px-3 py-2 text-sm leading-relaxed break-words whitespace-pre-wrap shadow-sm`}
+                    : 'bg-[var(--color-celeste)] text-white rounded-tl-2xl rounded-bl-2xl rounded-tr-md'} max-w-[78%] px-3 py-2 text-sm leading-relaxed break-words whitespace-pre-wrap shadow-sm msg-in`}
                 >
                   {m.text}
                 </div>
@@ -358,6 +365,7 @@ function ChatWidget() {
                 </div>
               </div>
             )}
+            <div ref={endRef} />
           </div>
           <form
             className="border-t border-slate-200 p-2"

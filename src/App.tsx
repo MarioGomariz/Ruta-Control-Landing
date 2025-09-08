@@ -315,8 +315,7 @@ function ChatWidget() {
         <div className="absolute bottom-0 right-16 w-[360px] max-w-[92vw] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl chat-anim-in">
           <div className="flex items-center justify-between bg-slate-50 px-3 py-2 border-b border-slate-200">
             <div className="flex items-center gap-2">
-              <img src={logo} alt="RutaControl" className="h-6" />
-              <strong className="text-slate-800">Chat Soporte RutaControl</strong>
+              <strong className="text-slate-800">Chatea con nosotros</strong>
             </div>
             <button onClick={() => setOpen(false)} className="rounded-md px-2 py-1 text-slate-600 hover:bg-slate-100">✕</button>
           </div>

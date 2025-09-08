@@ -262,6 +262,7 @@ function ChatWidget() {
     { role: "bot", text: "¡Hola! Soy el asistente de RutaControl.😊" },
     { role: "bot", text: "¿Tienes alguna duda? Estoy para ayudarte." },
   ]);
+  const [typing, setTyping] = useState(false);
 
   const faq = useMemo(
     () => [
@@ -303,7 +304,21 @@ function ChatWidget() {
       : match
       ? match.a
       : "Gracias por tu consulta. En breve te responderá un asesor. También podés dejar un email en la sección de Contacto.";
-    setMessages((m) => [...m, { role: "user", text }, { role: "bot", text: answer }]);
+
+    // Push user message immediately
+    setMessages((m) => [...m, { role: "user", text }]);
+
+    // After 3s, show typing indicator; after 3s more, send bot answer
+    const typingTimer = setTimeout(() => {
+      setTyping(true);
+      const answerTimer = setTimeout(() => {
+        setTyping(false);
+        setMessages((m) => [...m, { role: "bot", text: answer }]);
+      }, 3000);
+      // Store timer if future cleanup is needed
+      (window as any).__rc_answerTimer = answerTimer;
+    }, 3000);
+    (window as any).__rc_typingTimer = typingTimer;
   };
 
   useEffect(() => {
@@ -336,6 +351,13 @@ function ChatWidget() {
                 </div>
               </div>
             ))}
+            {typing && (
+              <div className="flex justify-start">
+                <div className="bg-slate-200 text-slate-600 max-w-[60%] px-3 py-2 text-sm rounded-tr-2xl rounded-br-2xl rounded-tl-md shadow-sm">
+                  <span className="typing-dots"><span className="dot"></span><span className="dot"></span><span className="dot"></span></span>
+                </div>
+              </div>
+            )}
           </div>
           <form
             className="border-t border-slate-200 p-2"

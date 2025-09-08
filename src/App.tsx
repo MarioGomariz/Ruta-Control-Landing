@@ -36,6 +36,13 @@ export default function App() {
 
 /* --------------------------- Header & Hero --------------------------- */
 function Header({ onNav }: { onNav: (id: string) => void }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [menuClosing, setMenuClosing] = useState(false);
+  const openMenu = () => { setMenuOpen(true); setMenuClosing(false); };
+  const closeMenu = () => {
+    setMenuClosing(true);
+    setTimeout(() => { setMenuOpen(false); setMenuClosing(false); }, 220);
+  };
   const items = [
     { id: "inicio", label: "Inicio" },
     { id: "modulos", label: "Módulos" },
@@ -46,9 +53,10 @@ function Header({ onNav }: { onNav: (id: string) => void }) {
 
   return (
     <header className="sticky top-0 z-40 w-full">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-2">
-        <div className="mx-auto max-w-5xl rounded-2xl border border-white/10 bg-[var(--color-navbar)]/95 backdrop-blur supports-[backdrop-filter]:bg-[var(--color-navbar)]/80 shadow-lg h-12 flex items-center justify-center">
-          <nav className="flex items-center gap-6 text-[14px] text-white/85 whitespace-nowrap">
+      <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 py-2">
+        <div className="relative mx-auto max-w-5xl h-12 flex items-center justify-end md:rounded-2xl md:border md:border-white/10 md:bg-[var(--color-navbar)]/95 md:backdrop-blur md:supports-[backdrop-filter]:bg-[var(--color-navbar)]/80 md:shadow-lg">
+          {/* Desktop navbar (visible md+) */}
+          <nav className="hidden md:flex items-center gap-5 text-[14px] text-white/85 whitespace-nowrap w-full justify-center px-3">
             {items.map((it) => (
               <button
                 key={it.id}
@@ -61,7 +69,7 @@ function Header({ onNav }: { onNav: (id: string) => void }) {
             <a
               href={LOGIN_URL}
               aria-label="Iniciar sesión"
-              className="h-9 w-9 grid place-items-center rounded-xl bg-[var(--color-celeste)] text-white shadow transition-transform duration-200 hover:-translate-y-0.5 hover:brightness-95"
+              className="h-9 w-9 grid place-items-center rounded-xl bg-[var(--color-celeste)] text-white shadow transition-transform duration-200 hover:-translate-y-0.5 hover:brightness-95 flex-shrink-0"
               title="Iniciar sesión"
             >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
@@ -70,6 +78,38 @@ function Header({ onNav }: { onNav: (id: string) => void }) {
               </svg>
             </a>
           </nav>
+
+          {/* Mobile hamburger (right aligned) */}
+          <button
+            className="md:hidden absolute inset-y-0 right-2 my-auto h-9 w-9 grid place-items-center rounded-xl bg-[var(--color-navbar)]/95 border border-white/20 text-white/90 hover:text-white shadow"
+            aria-label="Abrir menú"
+            onClick={() => (menuOpen ? closeMenu() : openMenu())}
+            title="Menú"
+          >
+            <span className={`transition-transform duration-200 ${menuOpen ? 'rotate-90 scale-110' : ''}`}>{menuOpen ? '✕' : '☰'}</span>
+          </button>
+
+          {(menuOpen || menuClosing) && (
+            <div className={`md:hidden absolute top-[calc(100%+8px)] right-2 z-50 w-[min(92vw,520px)] rounded-2xl border border-white/10 bg-[var(--color-navbar)]/95 backdrop-blur p-3 shadow-xl ${menuOpen ? 'menu-anim-in' : 'menu-anim-out'}`}
+            >
+              <div className="flex flex-col items-center gap-2 text-white/90 text-[15px]">
+                {items.map((it) => (
+                  <button
+                    key={it.id}
+                    onClick={() => { closeMenu(); onNav(it.id); }}
+                    className="w-full rounded-xl px-3 py-2 text-center hover:bg-white/10"
+                  >
+                    {it.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Backdrop */}
+          {(menuOpen || menuClosing) && (
+            <button aria-hidden className={`fixed inset-0 z-40 md:hidden bg-black/30 backdrop-blur-[1px] ${menuOpen ? 'backdrop-in' : 'backdrop-out'}`} onClick={closeMenu} />
+          )}
         </div>
       </div>
     </header>
@@ -84,8 +124,8 @@ function Hero({ onPrimary, onSecondary }: { onPrimary: () => void; onSecondary: 
       </div>
 
       <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
-        <div>
-          <p className="inline-flex items-center gap-2 rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-sky-700 text-xs font-medium">
+        <div className="text-center sm:text-left">
+          <p className="inline-flex items-center gap-2 rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-sky-700 text-xs font-medium mx-auto sm:mx-0">
             🚚 Logística • Flota • Reportes
           </p>
           <h1 className="mt-4 text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900">
@@ -94,7 +134,7 @@ function Hero({ onPrimary, onSecondary }: { onPrimary: () => void; onSecondary: 
           <p className="mt-4 text-lg leading-relaxed text-slate-600">
             RutaControl centraliza la gestión de viajes, vehículos, choferes y servicios con reportes, estadísticas y trazabilidad.
           </p>
-          <div className="mt-8 flex flex-wrap items-center gap-3">
+          <div className="mt-8 flex flex-wrap items-center justify-center sm:justify-start gap-3">
             <button onClick={onPrimary} className="rounded-2xl bg-[var(--color-celeste)] px-6 py-3 text-white font-semibold shadow transition-transform duration-200 hover:-translate-y-0.5 hover:brightness-95 active:scale-95 focus:outline-none focus:ring-2 focus:ring-sky-200">
               Probar demo / Iniciar sesión
             </button>
@@ -102,7 +142,7 @@ function Hero({ onPrimary, onSecondary }: { onPrimary: () => void; onSecondary: 
               Solicitar información
             </button>
           </div>
-          <ul className="mt-6 grid max-w-lg grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-slate-600">
+          <ul className="mt-6 grid max-w-lg grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-slate-600 mx-auto sm:mx-0">
             {[
               "Usuarios y roles con acceso seguro",
               "Registro de viajes con odómetro",
@@ -257,6 +297,7 @@ function Card({ icon, title, desc }: { icon: string; title: string; desc: string
 /* ------------------------------ Chat Widget ------------------------------ */
 function ChatWidget() {
   const [open, setOpen] = useState(false);
+  const [closing, setClosing] = useState(false);
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<{ role: "user" | "bot"; text: string }[]>([
     { role: "bot", text: "¡Hola! Soy el asistente de RutaControl.😊" },
@@ -338,13 +379,13 @@ function ChatWidget() {
 
   return (
     <div className="fixed bottom-5 right-5 z-50">
-      {open && (
-        <div className="absolute bottom-0 right-16 w-[360px] max-w-[92vw] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl chat-anim-in">
+      {(open || closing) && (
+        <div className={`absolute bottom-0 right-0 sm:right-16 w-[min(92vw,360px)] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl ${open ? 'chat-anim-in' : 'chat-anim-out'}`}>
           <div className="flex items-center justify-between bg-slate-50 px-3 py-2 border-b border-slate-200">
             <div className="flex items-center gap-2">
               <strong className="text-slate-800">Chatea con nosotros</strong>
             </div>
-            <button onClick={() => setOpen(false)} className="rounded-md px-2 py-1 text-slate-600 hover:bg-slate-100">✕</button>
+            <button onClick={() => { setClosing(true); setOpen(false); setTimeout(() => setClosing(false), 220); }} className="rounded-md px-2 py-1 text-slate-600 hover:bg-slate-100">✕</button>
           </div>
           <div className="h-72 overflow-y-auto p-3 space-y-2">
             {messages.map((m, i) => (
@@ -352,7 +393,7 @@ function ChatWidget() {
                 <div
                   className={`${m.role === 'bot'
                     ? 'bg-slate-200 text-slate-800 rounded-tr-2xl rounded-br-2xl rounded-tl-md'
-                    : 'bg-[var(--color-celeste)] text-white rounded-tl-2xl rounded-bl-2xl rounded-tr-md'} max-w-[78%] px-3 py-2 text-sm leading-relaxed break-words whitespace-pre-wrap shadow-sm msg-in`}
+                    : 'bg-[var(--color-celeste)] text-white rounded-tl-2xl rounded-bl-2xl rounded-tr-md'} max-w-[85%] sm:max-w-[78%] px-3 py-2 text-sm leading-relaxed break-words whitespace-pre-wrap shadow-sm msg-in`}
                 >
                   {m.text}
                 </div>
@@ -360,7 +401,7 @@ function ChatWidget() {
             ))}
             {typing && (
               <div className="flex justify-start">
-                <div className="bg-slate-200 text-slate-600 max-w-[60%] px-3 py-2 text-sm rounded-tr-2xl rounded-br-2xl rounded-tl-md shadow-sm">
+                <div className="bg-slate-200 text-slate-600 max-w-[70%] sm:max-w-[60%] px-3 py-2 text-sm rounded-tr-2xl rounded-br-2xl rounded-tl-md shadow-sm">
                   <span className="typing-dots"><span className="dot"></span><span className="dot"></span><span className="dot"></span></span>
                 </div>
               </div>
@@ -398,7 +439,15 @@ function ChatWidget() {
         </div>
       )}
       <button
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => {
+          if (open) {
+            setClosing(true);
+            setOpen(false);
+            setTimeout(() => setClosing(false), 220);
+          } else {
+            setOpen(true);
+          }
+        }}
         className="grid h-14 w-14 place-items-center rounded-full bg-[var(--color-celeste)] text-white shadow-xl hover:brightness-90"
         aria-label="Abrir chat"
         title="Abrir chat"

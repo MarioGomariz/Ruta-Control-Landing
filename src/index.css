@@ -59,6 +59,14 @@ button, a {
   animation: chatIn 240ms ease-out both;
 }
 
+@keyframes chatOut {
+  from { opacity: 1; transform: translateX(0) translateY(0) scale(1); }
+  to { opacity: 0; transform: translateX(8px) translateY(8px) scale(0.98); }
+}
+.chat-anim-out {
+  animation: chatOut 200ms ease-in both;
+}
+
 /* Chat typing indicator */
 .typing-dots {
   display: inline-flex;
@@ -89,3 +97,30 @@ button, a {
 .msg-in {
   animation: msgIn 220ms ease-out both;
 }
+
+/* Mobile menu + backdrop animations */
+@keyframes menuIn {
+  from { opacity: 0; transform: translateY(-6px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes menuOut {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to { opacity: 0; transform: translateY(-6px) scale(0.98); }
+}
+.menu-anim-in { animation: menuIn 220ms ease-out both; }
+.menu-anim-out { animation: menuOut 180ms ease-in both; }
+
+@keyframes backdropIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes backdropOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+.backdrop-in { animation: backdropIn 200ms ease-out both; }
+.backdrop-out { animation: backdropOut 150ms ease-in both; }
+
+/* Optional: hide scrollbar helper */
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }

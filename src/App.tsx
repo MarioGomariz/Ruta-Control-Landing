@@ -35,9 +35,12 @@ export default function App() {
 
 
 /* --------------------------- Header & Hero --------------------------- */
+// Header: barra superior fija. En mobile muestra sólo el botón hamburguesa a la derecha
+// con un panel desplegable animado (menu-anim-in/out + backdrop). En pantallas md+
+// se muestra la navegación centrada dentro de una "cápsula" con fondo y blur.
 function Header({ onNav }: { onNav: (id: string) => void }) {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [menuClosing, setMenuClosing] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false); // estado abierto/cerrado del menú mobile
+  const [menuClosing, setMenuClosing] = useState(false); // estado transitorio para animar el cierre
   const openMenu = () => { setMenuOpen(true); setMenuClosing(false); };
   const closeMenu = () => {
     setMenuClosing(true);
@@ -79,7 +82,7 @@ function Header({ onNav }: { onNav: (id: string) => void }) {
             </a>
           </nav>
 
-          {/* Mobile hamburger (right aligned) */}
+          {/* Mobile hamburger (right aligned): botón que abre/cierra el menú con animación */}
           <button
             className="md:hidden absolute inset-y-0 right-2 my-auto h-9 w-9 grid place-items-center rounded-xl bg-[var(--color-navbar)]/95 border border-white/20 text-white/90 hover:text-white shadow"
             aria-label="Abrir menú"
@@ -106,7 +109,7 @@ function Header({ onNav }: { onNav: (id: string) => void }) {
             </div>
           )}
 
-          {/* Backdrop */}
+          {/* Backdrop: capa oscura que cierra el menú al tocar fuera. No cubre el panel (z-index menor). */}
           {(menuOpen || menuClosing) && (
             <button aria-hidden className={`fixed inset-0 z-40 md:hidden bg-black/30 backdrop-blur-[1px] ${menuOpen ? 'backdrop-in' : 'backdrop-out'}`} onClick={closeMenu} />
           )}
@@ -116,6 +119,7 @@ function Header({ onNav }: { onNav: (id: string) => void }) {
   );
 }
 
+// Hero: cabecera con titular, descripción y CTAs. Centrado en mobile y alineado en desktop.
 function Hero({ onPrimary, onSecondary }: { onPrimary: () => void; onSecondary: () => void }) {
   return (
     <section id="inicio" className="relative py-20 sm:py-28">
@@ -134,6 +138,7 @@ function Hero({ onPrimary, onSecondary }: { onPrimary: () => void; onSecondary: 
           <p className="mt-4 text-lg leading-relaxed text-slate-600">
             RutaControl centraliza la gestión de viajes, vehículos, choferes y servicios con reportes, estadísticas y trazabilidad.
           </p>
+          {/* Botones principales con micro-animaciones de hover/active */}
           <div className="mt-8 flex flex-wrap items-center justify-center sm:justify-start gap-3">
             <button onClick={onPrimary} className="rounded-2xl bg-[var(--color-celeste)] px-6 py-3 text-white font-semibold shadow transition-transform duration-200 hover:-translate-y-0.5 hover:brightness-95 active:scale-95 focus:outline-none focus:ring-2 focus:ring-sky-200">
               Probar demo / Iniciar sesión
@@ -142,6 +147,7 @@ function Hero({ onPrimary, onSecondary }: { onPrimary: () => void; onSecondary: 
               Solicitar información
             </button>
           </div>
+          {/* Lista de bullets destacados del producto */}
           <ul className="mt-6 grid max-w-lg grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-slate-600 mx-auto sm:mx-0">
             {[
               "Usuarios y roles con acceso seguro",
@@ -163,6 +169,7 @@ function Hero({ onPrimary, onSecondary }: { onPrimary: () => void; onSecondary: 
   );
 }
 
+// SectionTitle: título y subtítulo centrados para cada sección.
 function SectionTitle({ id, title, subtitle }: { id: string; title: string; subtitle?: string }) {
   return (
     <div id={id} className="mx-auto mb-10 max-w-3xl text-center">
@@ -282,6 +289,8 @@ function Footer() {
 }
 
 /* ------------------------------ UI helpers ------------------------------ */
+// Card: tarjeta neutra pensada para verse bien sobre secciones con fondo blanco.
+// Borde suave, sombra leve y badge para el ícono.
 function Card({ icon, title, desc }: { icon: string; title: string; desc: string }) {
   return (
     <div className="rounded-2xl border border-slate-200/80 bg-gradient-to-b from-white to-slate-50 p-6 shadow-sm">
@@ -295,18 +304,22 @@ function Card({ icon, title, desc }: { icon: string; title: string; desc: string
 }
 
 /* ------------------------------ Chat Widget ------------------------------ */
+// ChatWidget: widget de chat simulando un asistente. Soporta:
+// - Apertura a la izquierda del FAB con animaciones de entrada/salida.
+// - "Typing" del bot con puntos animados y auto-scroll al último mensaje.
+// - Búsqueda por palabras clave contra un JSON (faq.json) y respuestas variables.
 function ChatWidget() {
-  const [open, setOpen] = useState(false);
-  const [closing, setClosing] = useState(false);
+  const [open, setOpen] = useState(false);      // panel visible
+  const [closing, setClosing] = useState(false); // estado de cierre para animación
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<{ role: "user" | "bot"; text: string }[]>([
     { role: "bot", text: "¡Hola! Soy el asistente de RutaControl.😊" },
     { role: "bot", text: "¿Tienes alguna duda? Estoy para ayudarte." },
   ]);
-  const [typing, setTyping] = useState(false);
-  const endRef = useRef<HTMLDivElement | null>(null);
+  const [typing, setTyping] = useState(false);  // indicador de "escribiendo"
+  const endRef = useRef<HTMLDivElement | null>(null); // ancla para auto-scroll
   type FaqItem = { q: string; a?: string; answers?: string[]; kw: string[] };
-  const [faq, setFaq] = useState<FaqItem[]>();
+  const [faq, setFaq] = useState<FaqItem[]>();   // contenido dinámico desde JSON
 
   // Cargar preguntas/respuestas desde JSON statico
   useEffect(() => {
@@ -318,9 +331,14 @@ function ChatWidget() {
   }, []);
 
   const respond = (text: string) => {
+    // Normalizamos y detectamos saludos simples
     const clean = text.toLowerCase().trim();
     const isGreeting = /^(hola|buenas|buenos dias|buenas tardes|buenas noches|hello|hi|qué tal|que tal)\b/.test(clean);
+
+    // Match naive por palabras clave (kw). Si hay varias, se queda con la primera coincidencia
     const match = (faq ?? []).find((f) => f.kw.some((k) => clean.includes(k)));
+
+    // Elegimos una respuesta al azar entre las variantes disponibles
     const pick = (arr: string[]) => arr[Math.floor(Math.random() * arr.length)] as string;
     const answer = isGreeting
       ? "¡Hola! ¿En qué puedo ayudarte? Puedo contarte sobre módulos, reportes, roles o precios."
@@ -328,16 +346,17 @@ function ChatWidget() {
       ? pick((match.answers && match.answers.length ? match.answers : (match.a ? [match.a] : [])) || [])
       : "Gracias por tu consulta. En breve te responderá un asesor. También podés dejar un email en la sección de Contacto.";
 
-    // Push user message immediately
+    // 1) Agregamos el mensaje del usuario inmediatamente
     setMessages((m) => [...m, { role: "user", text }]);
 
-    // After a short delay, show typing indicator; keep it for a variable duration based on answer length
-    const initialDelay = 1200; // ms
-    const typingMs = Math.min(3800, Math.max(1600, 400 + answer.length * 35));
+    // 2) Tras un delay corto, mostramos "typing" y lo mantenemos según el largo de la respuesta
+    const initialDelay = 1200; // ms antes de mostrar typing
+    const typingMs = Math.min(3800, Math.max(1600, 400 + answer.length * 35)); // duración variable
     const typingTimer = setTimeout(() => {
       setTyping(true);
       const answerTimer = setTimeout(() => {
         setTyping(false);
+        // 3) Finalmente, agregamos la respuesta del bot
         setMessages((m) => [...m, { role: "bot", text: answer }]);
       }, typingMs);
       (window as any).__rc_answerTimer = answerTimer;
@@ -346,6 +365,7 @@ function ChatWidget() {
   };
 
   useEffect(() => {
+    // Atajo de teclado opcional: Ctrl/Cmd + K para abrir/cerrar el chat
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") setOpen((v) => !v);
     };
@@ -355,17 +375,20 @@ function ChatWidget() {
 
   // Auto-scroll to the latest message or typing indicator
   useEffect(() => {
+    // Cada vez que cambian los mensajes, typing u open, hacemos scroll suave al final
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, typing, open]);
 
   return (
     <div className="fixed bottom-5 right-5 z-50">
       {(open || closing) && (
+        // Contenedor del panel del chat con animación de entrada/salida
         <div className={`absolute bottom-0 right-0 sm:right-16 w-[min(92vw,360px)] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl ${open ? 'chat-anim-in' : 'chat-anim-out'}`}>
           <div className="flex items-center justify-between bg-slate-50 px-3 py-2 border-b border-slate-200">
             <div className="flex items-center gap-2">
               <strong className="text-slate-800">Chatea con nosotros</strong>
             </div>
+            {/* Cierre suave del panel */}
             <button onClick={() => { setClosing(true); setOpen(false); setTimeout(() => setClosing(false), 220); }} className="rounded-md px-2 py-1 text-slate-600 hover:bg-slate-100">✕</button>
           </div>
           <div className="h-72 overflow-y-auto p-3 space-y-2">

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import logo from './assets/logo.png'
 
 const LOGIN_URL = "https://ruta-control.vercel.app";
@@ -305,46 +305,27 @@ function ChatWidget() {
   ]);
   const [typing, setTyping] = useState(false);
   const endRef = useRef<HTMLDivElement | null>(null);
+  type FaqItem = { q: string; a?: string; answers?: string[]; kw: string[] };
+  const [faq, setFaq] = useState<FaqItem[]>();
 
-  const faq = useMemo(
-    () => [
-      {
-        q: "¿Qué es RutaControl?",
-        a: "Es una aplicación web para administrar viajes, vehículos, choferes y servicios, con reportes y estadísticas para la toma de decisiones.",
-        kw: ["que es", "rutacontrol", "descripcion", "app", "aplicacion"],
-      },
-      {
-        q: "¿Qué módulos tiene?",
-        a: "Incluye Choferes, Tractores, Semirremolques, Viajes, Servicios y Usuarios/Roles.",
-        kw: ["modulos", "funcionalidades", "entidades", "chofer", "viaje", "tractor", "semirremolque", "servicio", "usuario"],
-      },
-      {
-        q: "¿Puedo exportar reportes?",
-        a: "Sí, soporta reportes descargables en PDF y Excel con filtros por período, unidad o conductor.",
-        kw: ["reporte", "pdf", "excel", "descargar", "exportar"],
-      },
-      {
-        q: "¿Muestra estadísticas?",
-        a: "Presenta gráficos con uso de la flota, kilómetros por chofer/vehículo y comparativas.",
-        kw: ["estadistica", "grafico", "dashboard", "metricas"],
-      },
-      {
-        q: "¿Cómo acceden los usuarios?",
-        a: "Cada usuario ingresa con credenciales y permisos por rol (administrador, chofer, etc.).",
-        kw: ["usuario", "rol", "login", "acceso", "seguridad"],
-      },
-    ],
-    []
-  );
+  // Cargar preguntas/respuestas desde JSON statico
+  useEffect(() => {
+    const url = new URL('./data/faq.json', import.meta.url);
+    fetch(url)
+      .then((r) => r.json())
+      .then((data: FaqItem[]) => Array.isArray(data) && data.length && setFaq(data))
+      .catch(() => {});
+  }, []);
 
   const respond = (text: string) => {
     const clean = text.toLowerCase().trim();
     const isGreeting = /^(hola|buenas|buenos dias|buenas tardes|buenas noches|hello|hi|qué tal|que tal)\b/.test(clean);
-    const match = faq.find((f) => f.kw.some((k) => clean.includes(k)));
+    const match = (faq ?? []).find((f) => f.kw.some((k) => clean.includes(k)));
+    const pick = (arr: string[]) => arr[Math.floor(Math.random() * arr.length)] as string;
     const answer = isGreeting
       ? "¡Hola! ¿En qué puedo ayudarte? Puedo contarte sobre módulos, reportes, roles o precios."
       : match
-      ? match.a
+      ? pick((match.answers && match.answers.length ? match.answers : (match.a ? [match.a] : [])) || [])
       : "Gracias por tu consulta. En breve te responderá un asesor. También podés dejar un email en la sección de Contacto.";
 
     // Push user message immediately

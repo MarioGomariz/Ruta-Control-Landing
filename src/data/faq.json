@@ -1,0 +1,101 @@
+[
+  {
+    "q": "¿Qué es RutaControl?",
+    "answers": [
+      "RutaControl es una app web para gestionar viajes, vehículos y choferes, con reportes y estadísticas para decisiones rápidas.",
+      "Es una plataforma centralizada de logística que reemplaza planillas sueltas por un tablero con KPIs y trazabilidad.",
+      "Una solución SaaS enfocada en flotas: registro operativo, análisis y exportes en un mismo lugar."
+    ],
+    "kw": ["que es", "rutacontrol", "descripcion", "app", "aplicacion", "para que sirve", "que hace"]
+  },
+  {
+    "q": "¿Qué módulos tiene?",
+    "answers": [
+      "Choferes, Tractores, Semirremolques, Viajes, Servicios y Usuarios/Roles.",
+      "Gestión de Viajes y Servicios, administración de flota (tractores/semis) y permisos por usuario.",
+      "Módulos operativos (viajes/servicios), maestros (choferes/vehículos) y seguridad (usuarios y roles)."
+    ],
+    "kw": ["modulos", "funcionalidades", "entidades", "chofer", "viaje", "tractor", "semirremolque", "servicio", "usuario"]
+  },
+  {
+    "q": "¿Puedo exportar reportes?",
+    "answers": [
+      "Sí, exportás a PDF y Excel con filtros por período, unidad o conductor.",
+      "Los listados se descargan en PDF/XLSX y podés acotar por fechas o por vehículo.",
+      "Incluye reportes operativos listos para auditoría en PDF y planillas en Excel."
+    ],
+    "kw": ["reporte", "pdf", "excel", "descargar", "exportar", "listados", "informes"]
+  },
+  {
+    "q": "¿Muestra estadísticas?",
+    "answers": [
+      "Sí, dashboards con uso de flota, km por chofer/vehículo y comparativas.",
+      "Incluye gráficos de distribución de viajes, rendimiento y tendencias.",
+      "KPIs clave: km trabajados, días activos y desempeño por unidad/chofer."
+    ],
+    "kw": ["estadistica", "grafico", "dashboard", "metricas", "graficos", "kpi"]
+  },
+  {
+    "q": "¿Cómo acceden los usuarios?",
+    "answers": [
+      "Cada usuario ingresa con credenciales y permisos por rol (admin, chofer, etc.).",
+      "Acceso por usuario y contraseña, con vistas limitadas según rol.",
+      "Soporta perfiles con permisos diferenciados y separación de datos."
+    ],
+    "kw": ["usuario", "rol", "login", "acceso", "seguridad", "permisos", "credenciales"]
+  },
+  {
+    "q": "¿Tienen demo?",
+    "answers": [
+      "Sí, ingresá con el botón ‘Iniciar sesión’ para probar la demo.",
+      "Podés explorar la demo desde el botón azul del encabezado.",
+      "Ofrecemos un entorno de prueba para evaluar módulos y reportes."
+    ],
+    "kw": ["demo", "probar", "iniciar", "login", "prueba", "demo online"]
+  },
+  {
+    "q": "¿Precio?",
+    "answers": [
+      "Tenemos planes Starter, Pro y Empresa. Escribinos para una propuesta a medida.",
+      "El costo depende del tamaño de la flota y módulos. Te enviamos una cotización.",
+      "Ofrecemos planes escalables: comenzá simple y ampliá cuando lo necesites."
+    ],
+    "kw": ["precio", "plan", "costo", "licencia", "planes", "cuanto sale"]
+  },
+  {
+    "q": "¿Integraciones?",
+    "answers": [
+      "Integramos con ERPs y servicios de mapas vía API bajo solicitud.",
+      "Podemos conectar con sistemas externos (ERP, BI) mediante endpoints.",
+      "Soporta integraciones personalizadas según tu flujo."
+    ],
+    "kw": ["integracion", "api", "erp", "mapas", "webhook", "conectar"]
+  },
+  {
+    "q": "¿Migran datos?",
+    "answers": [
+      "Sí, ayudamos a importar maestros (choferes, vehículos) y datos históricos.",
+      "Ofrecemos plan de migración y plantillas para carga inicial.",
+      "Podemos acompañar la migración desde planillas a la plataforma."
+    ],
+    "kw": ["migracion", "importar", "datos", "xlsx", "csv", "historial"]
+  },
+  {
+    "q": "¿Tiempo de implementación?",
+    "answers": [
+      "El arranque típico es 1–2 semanas según alcance y migración.",
+      "Para un setup estándar, en días ya podés estar operando.",
+      "Si hay integraciones, el plazo se coordina según el tercero."
+    ],
+    "kw": ["implementacion", "tiempo", "cuanto tarda", "plazo", "onboarding"]
+  },
+  {
+    "q": "¿Soporte y contacto?",
+    "answers": [
+      "Contás con soporte por email y canal directo durante el onboarding.",
+      "Te asistimos en horarios hábiles y respondemos a consultas priorizadas.",
+      "Podés dejarnos tu email y te contacta un asesor."
+    ],
+    "kw": ["soporte", "contacto", "ayuda", "asistencia", "email"]
+  }
+]

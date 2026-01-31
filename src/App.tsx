@@ -24,6 +24,8 @@ export default function App() {
         <CasosUso />
         <SectionDivider />
         <Beneficios />
+        <SectionDivider />
+        <Contacto />
       </main>
       <Footer />
 
@@ -51,7 +53,7 @@ function Header({ onNav }: { onNav: (id: string) => void }) {
     { id: "modulos", label: "Módulos" },
     { id: "casos", label: "Casos de uso" },
     { id: "beneficios", label: "Beneficios" },
-    { id: "screens", label: "Screens" },
+    { id: "contacto", label: "Contacto" },
   ];
 
   return (
@@ -221,7 +223,7 @@ function Modulos() {
     { icon: "🚚", title: "Tractores (Camiones)", desc: "RTO, estado, servicio y alcance." },
     { icon: "🚛", title: "Semirremolques", desc: "Inspecciones visuales, espesores, mangueras, válvulas." },
     { icon: "📦", title: "Viajes", desc: "Odómetro, origen/destino, cálculo de km y duración." },
-    { icon: "🧰", title: "Servicios", desc: "GLP, metanol y combustibles líquidos con requisitos técnicos." },
+    { icon: "🧰", title: "Servicios", desc: "GLP y combustibles líquidos con requisitos técnicos." },
     { icon: "👤", title: "Usuarios & Roles", desc: "Permisos y trazabilidad de acciones." },
   ];
 
@@ -271,6 +273,89 @@ function Beneficios() {
         {benefits.map((b) => (
           <Card key={b.title} {...b} />
         ))}
+      </div>
+    </section>
+  );
+}
+
+function Contacto() {
+  const [formData, setFormData] = useState({ email: "", asunto: "", comentario: "" });
+  const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus("sending");
+    
+    setTimeout(() => {
+      console.log("Formulario enviado:", formData);
+      setStatus("success");
+      setFormData({ email: "", asunto: "", comentario: "" });
+      setTimeout(() => setStatus("idle"), 3000);
+    }, 1000);
+  };
+
+  return (
+    <section id="contacto" className="bg-white/95 backdrop-blur-sm rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8">
+      <SectionTitle
+        id="contacto"
+        title="Contacto"
+        subtitle="¿Tenés alguna consulta? Dejanos tu mensaje y te responderemos a la brevedad."
+      />
+      <div className="mx-auto max-w-2xl">
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label htmlFor="email" className="block text-sm font-semibold text-slate-700 mb-2">
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              required
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              className="w-full rounded-xl border border-slate-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-sky-200 focus:border-transparent"
+              placeholder="tu@email.com"
+            />
+          </div>
+          <div>
+            <label htmlFor="asunto" className="block text-sm font-semibold text-slate-700 mb-2">
+              Asunto
+            </label>
+            <input
+              type="text"
+              id="asunto"
+              required
+              value={formData.asunto}
+              onChange={(e) => setFormData({ ...formData, asunto: e.target.value })}
+              className="w-full rounded-xl border border-slate-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-sky-200 focus:border-transparent"
+              placeholder="¿En qué podemos ayudarte?"
+            />
+          </div>
+          <div>
+            <label htmlFor="comentario" className="block text-sm font-semibold text-slate-700 mb-2">
+              Comentario
+            </label>
+            <textarea
+              id="comentario"
+              required
+              rows={5}
+              value={formData.comentario}
+              onChange={(e) => setFormData({ ...formData, comentario: e.target.value })}
+              className="w-full rounded-xl border border-slate-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-sky-200 focus:border-transparent resize-none"
+              placeholder="Contanos tu consulta..."
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={status === "sending"}
+            className="w-full rounded-2xl bg-[var(--color-celeste)] px-6 py-3 text-white font-semibold shadow transition-transform duration-200 hover:-translate-y-0.5 hover:brightness-95 active:scale-95 focus:outline-none focus:ring-2 focus:ring-sky-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {status === "sending" ? "Enviando..." : status === "success" ? "✓ Enviado" : "Enviar"}
+          </button>
+          {status === "success" && (
+            <p className="text-center text-sm text-green-600 font-medium">¡Gracias! Tu mensaje fue enviado correctamente.</p>
+          )}
+        </form>
       </div>
     </section>
   );

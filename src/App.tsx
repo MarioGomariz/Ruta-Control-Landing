@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import emailjs from '@emailjs/browser'
 import logo from './assets/logo.png'
 
 const LOGIN_URL = "https://ruta-control.vercel.app";
@@ -281,17 +282,37 @@ function Beneficios() {
 function Contacto() {
   const [formData, setFormData] = useState({ email: "", asunto: "", comentario: "" });
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("sending");
+    setErrorMsg("");
     
-    setTimeout(() => {
-      console.log("Formulario enviado:", formData);
+    try {
+      const templateParams = {
+        from_email: formData.email,
+        to_email: "garridosandraelena@gmail.com",
+        subject: formData.asunto,
+        message: formData.comentario,
+      };
+
+      await emailjs.send(
+        'service_6r5td0i',
+        'template_sjcd4wc',
+        templateParams,
+        'WFOUPmQiqhasboWnL'
+      );
+
       setStatus("success");
       setFormData({ email: "", asunto: "", comentario: "" });
       setTimeout(() => setStatus("idle"), 3000);
-    }, 1000);
+    } catch (error) {
+      console.error("Error al enviar email:", error);
+      setStatus("error");
+      setErrorMsg("Hubo un error al enviar el mensaje. Por favor, intentá nuevamente.");
+      setTimeout(() => setStatus("idle"), 5000);
+    }
   };
 
   return (
@@ -354,6 +375,9 @@ function Contacto() {
           </button>
           {status === "success" && (
             <p className="text-center text-sm text-green-600 font-medium">¡Gracias! Tu mensaje fue enviado correctamente.</p>
+          )}
+          {status === "error" && (
+            <p className="text-center text-sm text-red-600 font-medium">{errorMsg}</p>
           )}
         </form>
       </div>

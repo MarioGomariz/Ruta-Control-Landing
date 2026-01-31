@@ -291,15 +291,15 @@ function Contacto() {
     
     try {
       const templateParams = {
-        from_email: formData.email,
-        to_email: "garridosandraelena@gmail.com",
-        subject: formData.asunto,
+        email: formData.email,
+        name: formData.email,
+        title: formData.asunto,
         message: formData.comentario,
       };
 
       await emailjs.send(
         'service_6r5td0i',
-        'template_sjcd4wc',
+        'template_sas1a6h',
         templateParams,
         'WFOUPmQiqhasboWnL'
       );
